@@ -3,13 +3,14 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import MainLayout from "./components/layout/Main/Main";
-import Left from "./components/layout/Left/Left";
+import Left from "./components/layout/Right/Right";
 import Header from "./components/layout/Header/Header";
 import "./App.css";
 
 import Products from "./pages/Products/Products";
-import Cart from "./pages/Cart/Cart";
+import Checkout from "./pages/Checkout/Checkout";
 import Home from "./pages/Home/Home";
+import Right from "./components/layout/Right/Right";
 
 
 const routes = [
@@ -25,7 +26,7 @@ const routes = [
   {
     path: "/cart",
     sidebar: () => <div>cart</div>,
-    main: () => <div><Cart></Cart></div>
+    main: () => <div><Checkout></Checkout></div>
   }
 ];
 
@@ -53,7 +54,7 @@ function App() {
           </ul>
         </div>
 
-        <div style={{ flex: 1, padding: "10px" }}>
+        <div style={{ flex: 1, padding: "10px", width: "60%"}}>
           <Routes>
             {routes.map((route, index) => (
               <Route

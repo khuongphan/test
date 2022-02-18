@@ -4,7 +4,3 @@ export interface Product {
     price: number;
     count: number;
 }
-
-export interface Cart {
-    products: Product[];    
-}

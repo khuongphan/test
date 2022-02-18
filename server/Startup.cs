@@ -30,6 +30,7 @@ namespace server
         {
 
             services.AddControllers();
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "server", Version = "v1" });
@@ -54,6 +55,12 @@ namespace server
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => {
+                x.AllowAnyHeader();
+                x.AllowAnyOrigin();
+                x.SetIsOriginAllowed(x => true);
+            });
 
             app.UseAuthorization();
 

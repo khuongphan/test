@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../../app/store";
 import { Product } from "../types";
 import { loadingProductList } from "./ProductAPI";
 
@@ -21,16 +22,30 @@ export const loadingProductListAsync = createAsyncThunk(
     }
 );
 
+
 export const productListSlice = createSlice({
     name: 'productList',
     initialState,
     reducers: {
         refreshProductList: (state) => {
-            console.log('refreshProductList');
-        }
+        },
     },
     extraReducers: (builder) => {
+        builder
+        .addCase(loadingProductListAsync.pending, (state) => {
+            state.status = 'loading';
+            console.log(state.status);            
+        })
+        .addCase(loadingProductListAsync.fulfilled, (state, action) => {
+            state.status = 'idle';
+            console.log(state.status);
+            state.productList = action.payload;
+        })
     }
 });
+
+export const { refreshProductList } = productListSlice.actions;
+
+export const selectProductList = (state: RootState) => state.productList.productList;
 
 export default productListSlice.reducer;

@@ -1,38 +1,42 @@
-import React from 'react';
-import { useAppSelector } from '../../../app/hook';
-import { selectCart } from '../Cart/cartSlice';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import ProductComponent from './Product';
-import { Cart, Product } from '../types';
-import { connect, ConnectedProps } from 'react-redux';
-
-
-
-const mapState = (state: Cart) => {
-  return { products : state.products };
-};
-
-const mapDispatch = {
-  
-}
+import { loadingProductList } from './ProductAPI';
+import { loadingProductListAsync, selectProductList } from './ProductListSlice';
 
 export function ProductList() {
-  const cart = useAppSelector(selectCart);
+  const dispatch = useAppDispatch();
+  const productList = useAppSelector(selectProductList);
+  
+  useEffect(() => {
+  });
+
+  console.log('productList', productList);
 
   return (
     <div>
+      <div>
+      <button
+          onClick={() => dispatch(loadingProductListAsync())}
+        >Loading Products
+        </button>
+      </div>
+      <div>
       {
-        cart.products.map((item, index) => {
+        productList.map((item) => {
+          return (
           <ProductComponent
+            key={item.id}
             id={item.id}
             name={item.name}
             count={0}
             price={item.price} />
-        })
+          )
+          })
       }
+      </div>
     </div>
   );
 }
 
-const connector = connect(mapState, mapDispatch);
-
-export default connector(ProductList);
+export default ProductList;
