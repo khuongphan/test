@@ -5,7 +5,7 @@ import CartComponent from '../../features/Cart/Cart';
 function Right() {
   return (
     <div className="right-layout">
-      <CartComponent></CartComponent>
+      <CartComponent showCheckout={true}></CartComponent>
     </div>
   );
 }

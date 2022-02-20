@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
-import { Product } from "../types";
+import { Country, Product } from "../../../app/types";
 import { loadingProductList } from "./ProductAPI";
 
 
@@ -16,8 +16,8 @@ const initialState: ProductListState = {
 
 export const loadingProductListAsync = createAsyncThunk(
     'products/loading',
-    async () => {
-        const response = await loadingProductList();
+    async (payload: Country, thunkAPI) => {
+        const response = await loadingProductList(payload.code);
         return response.data;
     }
 );

@@ -1,27 +1,29 @@
 import React from "react";
-import { Product } from "../types";
-import { addProduct, removeProduct } from "../../features/Cart/cartSlice";
-import { useDispatch } from "react-redux";
+import { Button, Card } from "antd";
+import { Product } from "../../../app/types";
+import { addProduct, updateCostAsync } from "../../features/Cart/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { ProductProps } from "./ProductProp";
+import { PlusOutlined } from '@ant-design/icons';
 
-function ProductComponent(product: Product) {
+function ProductComponent({ product, currency }: ProductProps) {
   const dispatch = useDispatch();
   const AddToCart = (product: Product) => {
     dispatch(addProduct(product));
   };
-  const RemoveFromCart = (product: Product) => {
-      dispatch(removeProduct(product));
-  };
 
-  console.log("product", product);
   return (
-    <div>
-      <div>Id: {product.id}</div>
-      <div>Name: {product.name}</div>
-      <div>Price: {product.price}</div>
-      <div>
-        <button onClick={() => AddToCart(product)}>Add</button>
-      </div>
-    </div>
+    <Card title={product.name} style={{ width: 300 }}
+    actions ={[
+      <Button type="ghost" key="addProduct" onClick={() => AddToCart(product)}><PlusOutlined/>Add</Button>
+    ]}
+    >
+      <p>Product Id: {product.id}</p>
+      <p>Name: {product.name}</p>
+      <p>
+        Price: {product.price.toFixed(2)} {currency}
+      </p>
+    </Card>
   );
 }
 

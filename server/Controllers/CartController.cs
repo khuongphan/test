@@ -1,44 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using server.Domain;
+using server.Repositories;
+using server.Services;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CartController : ControllerBase
     {
-        // GET: api/<CartController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly ICartService _cartService;
+        private readonly IDeliveryService _deliveryService;
+        private readonly ICountryRepository _countryRepository;
+
+        public CartController(ICartService cartService, IDeliveryService deliveryService, ICountryRepository countryRepository)
         {
-            return new string[] { "value1", "value2" };
+            _cartService = cartService;
+            _deliveryService = deliveryService;
+            _countryRepository = countryRepository;
         }
 
-        // GET api/<CartController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPost("calculate")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Consumes("application/json")]
+        public IActionResult GetProduct([Required] Cart cart)
         {
-            return "value";
-        }
+            var country = _countryRepository.GetCountry(cart.Country.Code);
+            if (country == null)
+                country = _countryRepository.GetCountry("AUST");
 
-        // POST api/<CartController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<CartController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<CartController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            cart.Items.ForEach(x => x.TotalCost = _cartService.CalculateItemTotalCost(x, country.ExchangeRate));
+            cart.DeliveryCost = _deliveryService.CalculateDelivery(cart);
+            return new JsonResult(cart);
         }
     }
 }

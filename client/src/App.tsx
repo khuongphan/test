@@ -1,71 +1,94 @@
 import "./App.css";
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
-import MainLayout from "./components/layout/Main/Main";
-import Left from "./components/layout/Right/Right";
-import Header from "./components/layout/Header/Header";
-import "./App.css";
+import { Breadcrumb, Layout, Menu } from "antd";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useLocation,
+} from "react-router-dom";
 
 import Products from "./pages/Products/Products";
 import Checkout from "./pages/Checkout/Checkout";
 import Home from "./pages/Home/Home";
+import CheckoutComplete from "./pages/Checkout/CheckoutComplete";
 import Right from "./components/layout/Right/Right";
 
+const { Header, Content, Footer, Sider } = Layout;
 
 const routes = [
   {
     path: "/",
     exact: true,
-    main: () => <div><Home/></div>
+    text: "Home",
+    isMenu: true,
+    main: () => (
+      <div>
+        <Home />
+      </div>
+    ),
   },
   {
     path: "/products",
-    main: () => <div><Products></Products></div>
+    text: "Products",
+    isMenu: true,
+    main: () => (
+      <div>
+        <Products />
+      </div>
+    ),
   },
   {
-    path: "/cart",
+    path: "/checkout",
+    text: "Checkout",
+    isMenu: false,
+    main: () => (
+      <div>
+        <Checkout />
+      </div>
+    ),
+  },
+  {
+    path: "/checkoutcomplete",
+    isMenu: false,
     sidebar: () => <div>cart</div>,
-    main: () => <div><Checkout></Checkout></div>
-  }
+    main: () => (
+      <div>
+        <CheckoutComplete />
+      </div>
+    ),
+  },
 ];
 
 function App() {
   return (
     <Router>
-       <div style={{ display: "flex" }}>
-        <div
-          style={{
-            padding: "10px",
-            width: "20%",
-            background: "#f0f0f0"
-          }}
-        >
-          <ul style={{ listStyleType: "none", padding: 0 }}>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/products">Products</Link>
-            </li>
-            <li>
-              <Link to="/cart">Cart</Link>
-            </li>
-          </ul>
-        </div>
-
-        <div style={{ flex: 1, padding: "10px", width: "60%"}}>
-          <Routes>
-            {routes.map((route, index) => (
-              <Route
-                key={index}
-                path={route.path}
-                element={< route.main />}
-              />
-            ))}
-          </Routes>
-        </div>
-      </div>
+      <Layout className="layout">
+        <Header>
+          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["2"]}>
+            {routes
+              .filter((x) => x.isMenu)
+              .map((_, index) => {
+                return (
+                  <Menu.Item key={index + 1}>
+                    <Link to={_.path}>{_.text}</Link>
+                  </Menu.Item>
+                );
+              })}
+          </Menu>
+        </Header>
+        <Content style={{ padding: "0 50px" }}>
+          <div className="site-layout-background">
+            <Routes>
+              {routes.map((route, index) => (
+                <Route key={index} path={route.path} element={<route.main />} />
+              ))}
+            </Routes>
+          </div>
+        </Content>
+        <Footer style={{ textAlign: "center" }}>Khuong Phan</Footer>
+      </Layout>
     </Router>
   );
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using server.Domain;
+using server.Repositories;
 using server.Services;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,35 +14,27 @@ namespace server.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
-        public ProductsController(IProductService productService)
+        private readonly ICountryRepository _countryRepository;
+        public ProductsController(IProductService productService, ICountryRepository countryRepository)
         {
             _productService = productService;
+            _countryRepository = countryRepository;
         }
 
-        [HttpGet]
-        public IActionResult GetProductList()
+        [HttpGet()]
+        public IActionResult GetProductList([FromQuery] string countryCode)
         {
+            if (string.IsNullOrEmpty(countryCode))
+                countryCode = "AUST";
+            var country = _countryRepository.GetCountry(countryCode);
+            if (country == null) _countryRepository.GetCountry("AUST");
+
+            var productsList = _productService.GetProductList();
+            productsList.ForEach(product => {
+                product.Price = product.Price * country.ExchangeRate;
+            });
+
             return new JsonResult(_productService.GetProductList());
         }
-
-        [HttpGet("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [Consumes("application/json")]
-        public IActionResult GetProduct([Required] string Id)
-        {
-            int id;
-            if (!int.TryParse(Id, out id)) 
-                return BadRequest("Invalid product id");
-
-            var product = _productService.GetProductDetails(id);
-
-            if (product == null) 
-                return NotFound("Cannot find product");
-
-            return new JsonResult(product);
-        }
-
     }
 }

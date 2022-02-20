@@ -1,40 +1,31 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hook';
-import ProductComponent from './Product';
-import { loadingProductList } from './ProductAPI';
-import { loadingProductListAsync, selectProductList } from './ProductListSlice';
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hook";
+import ProductComponent from "./Product";
+import { loadingProductListAsync, selectProductList } from "./ProductListSlice";
+import { selectCart } from "../Cart/cartSlice";
+import { Col, Row, Space } from "antd";
 
 export function ProductList() {
   const dispatch = useAppDispatch();
   const productList = useAppSelector(selectProductList);
-  
-  useEffect(() => {
-  });
+  const country = useAppSelector(selectCart).cart.country;
 
-  console.log('productList', productList);
+  useEffect(() => {
+    dispatch(loadingProductListAsync(country));
+  }, [productList.length, country.code]);
+
 
   return (
     <div>
-      <div>
-      <button
-          onClick={() => dispatch(loadingProductListAsync())}
-        >Loading Products
-        </button>
-      </div>
-      <div>
-      {
-        productList.map((item) => {
+      <Row justify="start" align="top">
+      <Space size="middle">
+        {productList.map((item) => {
           return (
-          <ProductComponent
-            key={item.id}
-            id={item.id}
-            name={item.name}
-            count={0}
-            price={item.price} />
-          )
-          })
-      }
-      </div>
+            <Col span={6} key={item.id}><ProductComponent product={item} currency={country.currency} key={item.id}/></Col>
+          );
+        })}
+        </Space>
+      </Row>
     </div>
   );
 }

@@ -37,7 +37,11 @@ namespace server
             });
 
             services.AddScoped<IProductRepository, ProductRepository>()
-                    .AddScoped<IProductService, ProductService>();
+                    .AddScoped<IProductService, ProductService>()
+                    .AddScoped<ICartService, CartService>()
+                    .AddScoped<IDeliveryService, DeliveryService>()
+                    .AddScoped<ICountryRepository, CountryRepository>()
+                    .AddScoped<IOrderService, OrderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

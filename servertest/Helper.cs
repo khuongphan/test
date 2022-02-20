@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using server.Repositories;
+using server.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,10 @@ namespace servertest
         private static IServiceProvider GetServiceProvider()
         {
             var services = new ServiceCollection();
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services
+                .AddScoped<IProductRepository, ProductRepository>()
+                .AddScoped<IDeliveryService, DeliveryService>()
+                .AddScoped<ICountryRepository, CountryRepository>()    ;
 
             return services.BuildServiceProvider();            
         }
